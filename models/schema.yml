@@ -4,12 +4,48 @@ sources:
   - name: raw
     database: wagon-bootcamp-485514
     schema: gz_raw_data
+    description: "Raw Greenweez dataset loaded in BigQuery."
+
     tables:
       - name: sales
         identifier: raw_gz_sales
+        description: "Sales of Greenweez: one row per product in each order."
+        columns:
+          - name: "(orders_id || '-' || pdt_id)"
+            description: "Conceptual primary key (orders_id + pdt_id)."
+          - name: date_date
+            description: "Date of purchase."
+          - name: orders_id
+            description: "Order identifier."
+          - name: pdt_id
+            description: "Product identifier in the raw data (renamed to products_id in staging)."
 
       - name: product
         identifier: raw_gz_product
+        description: "Product reference data including purchase price."
+        columns:
+          - name: products_id
+            description: "Product identifier (primary key)."
+            tests:
+              - unique
+              - not_null
+          - name: purchse_price
+            description: "Purchase price in raw data (typo in column name)."
 
       - name: ship
         identifier: raw_gz_ship
+        description: "Shipping information per order."
+        columns:
+          - name: orders_id
+            description: "Order identifier (primary key)."
+            tests:
+              - unique
+              - not_null
+          - name: shipping_fee
+            description: "Shipping fee charged to the customer."
+          - name: shipping_fee_1
+            description: "Duplicate shipping fee column (same values as shipping_fee)."
+          - name: logCost
+            description: "Logistics cost (carrier/logistics)."
+          - name: ship_cost
+            description: "Shipping cost in raw data as a string."
