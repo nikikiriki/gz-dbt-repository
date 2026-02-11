@@ -1,4 +1,5 @@
 select
+  om.*,
   om.orders_id,
   om.date_date,
   om.margin + s.shipping_fee - s.logCost - s.ship_cost as operational_margin
