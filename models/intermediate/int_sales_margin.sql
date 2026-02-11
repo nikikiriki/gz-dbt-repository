@@ -28,8 +28,6 @@ joined as (
         s.revenue,
         s.quantity,
         p.purchase_price,
-
-        -- metrics
         s.quantity * p.purchase_price as purchase_cost,
         s.revenue - (s.quantity * p.purchase_price) as margin
 
