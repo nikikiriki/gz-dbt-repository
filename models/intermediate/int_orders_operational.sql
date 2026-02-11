@@ -2,6 +2,7 @@ select
   om.orders_id,
   om.date_date,
   om.revenue,
+  om.margin,
   om.purchase_cost,
   s.shipping_fee,
   s.logCost AS log_cost,
