@@ -189,3 +189,93 @@ models:
       - name: total_quantity_sold
         tests:
           - not_null
+
+  - name: stg_raw_adwords
+    description: "Staging model for Google Ads (Adwords) campaign performance and costs."
+    columns:
+      - name: date_date
+        description: "Date of the campaign metrics."
+        tests: [not_null]
+      - name: paid_source
+        description: "Paid traffic source / platform."
+        tests:
+          - not_null
+      - name: campaign_key
+        description: "Campaign identifier (from source system)."
+        tests: [not_null]
+      - name: campaign_name
+        description: "Campaign name (cleaned from camPGN_name)."
+        tests: [not_null]
+      - name: ads_cost
+        description: "Advertising cost for the campaign on the given day (FLOAT64)."
+      - name: impression
+        description: "Number of impressions."
+      - name: click
+        description: "Number of clicks."
+
+  - name: stg_raw_bing
+    description: "Staging model for Bing Ads campaign performance and costs."
+    columns:
+      - name: date_date
+        tests: [not_null]
+      - name: paid_source
+        tests:
+          - not_null
+      - name: campaign_key
+        tests: [not_null]
+      - name: campaign_name
+        tests: [not_null]
+
+  - name: stg_raw_criteo
+    description: "Staging model for Criteo campaign performance and costs."
+    columns:
+      - name: date_date
+        tests: [not_null]
+      - name: paid_source
+        tests:
+          - not_null
+      - name: campaign_key
+        tests: [not_null]
+      - name: campaign_name
+        tests: [not_null]
+
+  - name: stg_raw_facebook
+    description: "Staging model for Facebook Ads campaign performance and costs."
+    columns:
+      - name: date_date
+        tests: [not_null]
+      - name: paid_source
+        tests:
+          - not_null
+      - name: campaign_key
+        tests: [not_null]
+      - name: campaign_name
+        tests: [not_null]
+
+  - name: int_campaigns
+    description: "Union of all paid campaign sources (Adwords, Bing, Criteo, Facebook) at daily campaign grain."
+    columns:
+      - name: "(CAST(date_date AS STRING) || '-' || paid_source || '-' || campaign_key)"
+        description: "Conceptual primary key: date + paid_source + campaign_key."
+        tests:
+          - unique
+          - not_null
+      - name: date_date
+        description: "Date of the campaign metrics."
+        tests: [not_null]
+      - name: paid_source
+        description: "Paid traffic source / platform."
+        tests:
+          - not_null
+      - name: campaign_key
+        description: "Campaign identifier (from source system)."
+        tests: [not_null]
+      - name: campaign_name
+        description: "Campaign name (standardized)."
+        tests: [not_null]
+      - name: ads_cost
+        description: "Advertising cost for the campaign on the given day (FLOAT64)."
+      - name: impression
+        description: "Number of impressions."
+      - name: click
+        description: "Number of clicks."
