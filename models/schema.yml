@@ -1,0 +1,180 @@
+version: 2
+
+sources:
+  - name: raw
+    database: wagon-bootcamp-485514
+    schema: gz_raw_data
+    description: "Raw Greenweez dataset loaded in BigQuery."
+    tables:
+      - name: sales
+        identifier: raw_gz_sales
+        description: "Sales of Greenweez: one row per product in each order."
+        columns:
+          - name: "(orders_id || '-' || pdt_id)"
+            description: "Conceptual primary key (orders_id + pdt_id)."
+          - name: date_date
+            description: "Date of purchase."
+          - name: orders_id
+            description: "Order identifier."
+          - name: pdt_id
+            description: "Product identifier in the raw data (renamed to products_id in staging)."
+
+      - name: product
+        identifier: raw_gz_product
+        description: "Product reference data including purchase price."
+        columns:
+          - name: products_id
+            description: "Product identifier (primary key)."
+            tests:
+              - unique
+              - not_null
+          - name: purchse_price
+            description: "Purchase price in raw data (typo in column name)."
+
+      - name: ship
+        identifier: raw_gz_ship
+        description: "Shipping information per order."
+        columns:
+          - name: orders_id
+            description: "Order identifier (primary key)."
+            tests:
+              - unique
+              - not_null
+          - name: shipping_fee
+            description: "Shipping fee charged to the customer."
+          - name: shipping_fee_1
+            description: "Duplicate shipping fee column (same values as shipping_fee)."
+          - name: logCost
+            description: "Logistics cost (carrier/logistics)."
+          - name: ship_cost
+            description: "Shipping cost in raw data as a string."
+
+models:
+  - name: int_orders_operational
+    description: "Order-level model including revenue, margin, shipping costs, and operational margin."
+    columns:
+      - name: orders_id
+        description: "Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: date_date
+        description: "Date of the order."
+        tests:
+          - not_null
+      - name: revenue
+        description: "Total revenue per order."
+        tests:
+          - not_null
+      - name: purchase_cost
+        description: "Total purchase cost per order."
+        tests:
+          - not_null
+      - name: margin
+        description: "Margin per order (revenue - purchase_cost)."
+        tests:
+          - not_null
+      - name: shipping_fee
+        description: "Shipping fee paid by the customer."
+        tests:
+          - not_null
+      - name: log_cost
+        description: "Logistics cost paid by the company."
+        tests:
+          - not_null
+      - name: ship_cost
+        description: "Shipping cost incurred by the company."
+        tests:
+          - not_null
+      - name: operational_margin
+        description: "Operational margin per order: margin + shipping_fee - log_cost - ship_cost."
+        tests:
+          - not_null
+
+  - name: int_sales_margin
+    description: "Margin per product calculation."
+    columns:
+      - name: orders_id
+        tests:
+          - not_null
+      - name: products_id
+        tests:
+          - not_null
+      - name: date_date
+        tests:
+          - not_null
+      - name: revenue
+        tests:
+          - not_null
+      - name: quantity
+        tests:
+          - not_null
+      - name: purchase_price
+        tests:
+          - not_null
+      - name: purchase_cost
+        tests:
+          - not_null
+      - name: margin
+        tests:
+          - not_null
+
+  - name: int_margin_orders
+    description: "Calculate the margin per order."
+    columns:
+      - name: orders_id
+        description: "Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: date_date
+        tests:
+          - not_null
+      - name: revenue
+        tests:
+          - not_null
+      - name: purchase_cost
+        tests:
+          - not_null
+      - name: margin
+        tests:
+          - not_null
+
+  - name: finance_days
+    description: "Daily financial metrics for the finance team."
+    columns:
+      - name: date_date
+        description: "Primary key (one row per day)."
+        tests:
+          - unique
+          - not_null
+      - name: nb_transactions
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null
+      - name: average_basket
+        tests:
+          - not_null
+      - name: total_margin
+        tests:
+          - not_null
+      - name: operational_margin
+        tests:
+          - not_null
+      - name: total_purchase_cost
+        tests:
+          - not_null
+      - name: total_shipping_fees
+        tests:
+          - not_null
+      - name: total_log_costs
+        tests:
+          - not_null
+      - name: total_ship_costs
+        tests:
+          - not_null
+      - name: total_quantity_sold
+        tests:
+          - not_null
