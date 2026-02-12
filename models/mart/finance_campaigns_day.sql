@@ -7,7 +7,7 @@ SELECT
   f.operational_margin,
   c.ads_cost,
   c.ads_impression,
-  c.ads_clicks,
+  c.ads_click,
   f.total_quantity_sold AS quantity,
   f.total_revenue       AS revenue,
   f.total_purchase_cost AS purchase_cost,
