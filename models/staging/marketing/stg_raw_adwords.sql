@@ -6,4 +6,4 @@ camPGN_name AS campaign_name,
 CAST(ads_cost as float64) AS ads_cost,
 impression,
 click
-FROM {{ ref('stg_raw_adwords') }}
+FROM {{ source('raw', 'adwords') }}
